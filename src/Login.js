@@ -7,11 +7,25 @@ function Login() {
   const [bio, setBio] = useState('');
   const [notifications, setNotifications] = useState(false);
   const [staff, setStaff] = useState('');
+  const [validationErrors, setValidationErrors] = useState([]);
   // console.log(name, email, phone, staff, bio, notifications);
+  
+  function validate() {
+    const validationErrors = [];
+    if (!name) validationErrors.push('Please provide a name.');
+    let phoneNumber = /^\d{10}$/
+    if (!phone.match(phoneNumber)) validationErrors.push('Plese provide a valid phone number')
+    if (bio.length > 280) validationErrors.push('Stop typing so much!');
+    return validationErrors;
+  }
 
   function onSubmit(e) {
     e.preventDefault();
+    const errors = validate()
 
+    if(errors.length > 0){
+      return setValidationErrors(errors);
+    }
     const user = [name, email, phone, bio, notifications, staff];
 
     console.log(user);
@@ -21,18 +35,21 @@ function Login() {
     setBio('');
     setNotifications(false);
     setStaff('');
+    setValidationErrors([]);
   }
 
-  function validate() {
-    const validationErrors = [];
-    if (!name) validationErrors.push('Please provide a name.');
-    if (phone)
-    if (bio.length > 280) validationErrors.push('Stop typing so much!');
-  }
 
   return (
     <div>
       <h1>Registration Form</h1>
+      {validationErrors.length > 0 &&(
+        <div>
+          The following errors were found:
+          <ul>
+            {validationErrors.map((error) => <li key={error}>{error}</li>)}
+          </ul>
+        </div>
+      )}
       <form onSubmit={onSubmit}>
         <div>
           <label htmlFor="name">Name</label>
